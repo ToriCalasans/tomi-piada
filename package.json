@@ -1,0 +1,16 @@
+{
+  "name": "tomi-piada",
+  "version": "1.0.0",
+  "description": "a project that generates random and funny jokes",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next dev"
+  },
+  "author": "Tori E Mirer",
+  "license": "ISC",
+  "dependencies": {
+    "next": "^13.1.6",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  }
+}
