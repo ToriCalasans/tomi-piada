@@ -19,20 +19,19 @@
 }
 
 .titulo-principal {
+   color: var(--cor-secundaria);
 }
 
 .imagem-mascote {
-  width: 300px;
+  max-width: 70%;
+  width: min(300px, 70vw);
   height: auto;
-}
-
-.seletor-piada {
-}
-
-.botão-procurar {
+  object-fit: contain;
+  transition: transform 0.2s;
 }
 
 .texto-piada {
+  color: var(--cor-secundaria);
 }
 
 /*Componentes*/
@@ -52,8 +51,10 @@
   }
 }
 .seletor-piada {
-  padding: auto;
+  padding: 10px 20px;
   border-radius: 5px;
+  color: var(--cor-secundaria);
+  text-align: center;
   :hover {
     background-color: var(--cor-accento);
     transition: all 0.3s ease;
