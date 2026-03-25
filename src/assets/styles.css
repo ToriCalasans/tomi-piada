@@ -1,12 +1,13 @@
 :root {
   --cor-fundo: #157f58;
   --cor-primaria: #0c5e40;
-  --cor-secundaria: #666666;
+  --cor-secundaria: #0f0e0e;
   --cor-accento: #ffa083;
   --tamanho-titulo: 36px;
   --tamanho-texto: 18px;
 
   --largura-imagem: 300px;
+  --tipo-fonte:arial;
 }
 /*Layout geral*/
 .container-principal {
@@ -32,6 +33,7 @@
 
 .texto-piada {
   color: var(--cor-secundaria);
+  font-family: var(--tipo-fonte);
 }
 
 /*Componentes*/
