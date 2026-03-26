@@ -29,14 +29,21 @@ function Home() {
       <div>
         <h1 className="titulo-principal">Tomi Piadas</h1>
       </div>
-      <div>
-        <Image
-          src={imagensDavid[indiceImagem]}
-          alt="David a lagartixa"
-          title="David"
-          className="imagem-mascote"
-        />
+      <div className="principal-wrap">
+        <div className="avatar-container">
+          <div className="circulo-fundo"></div>
+          <Image
+            src={imagensDavid[indiceImagem]}
+            alt="David a lagartixa"
+            title="David"
+            className="imagem-mascote"
+          />
+        </div>
+          <div className="piada-container">
+            <p className="texto-piada">{piada}</p>
+        </div>
       </div>
+
       <div>
         <select name="selectTipoPiada" className="seletor-piada">
           <option value="piadasTio">Piadas de Tio</option>
@@ -52,9 +59,6 @@ function Home() {
         >
           Procurar piada
         </button>
-      </div>
-      <div>
-        <h1 className="texto-piada">{piada}</h1>
       </div>
     </div>
   );

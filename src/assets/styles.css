@@ -1,3 +1,4 @@
+/* 1. VARIÁVEIS DE AMBIENTE: Centraliza as cores e tamanhos para facilitar mudanças futuras */
 :root {
   --cor-fundo: #157f58;
   --cor-primaria: #0c5e40;
@@ -5,68 +6,128 @@
   --cor-accento: #ffa083;
   --tamanho-titulo: 36px;
   --tamanho-texto: 18px;
-
-  --largura-imagem: 300px;
-  --tipo-fonte:arial;
+  --largura-avatar-container: 200px;
+  --tipo-fonte: Arial, Helvetica, sans-serif;
 }
-/*Layout geral*/
+
+/* 2. LAYOUT GERAL: Configura a estrutura base da página */
 .container-principal {
   background-color: var(--cor-fundo);
-  height: 100vh;
-  align-items: center;
+  min-height: 100vh; /* Usa min-height para garantir que o fundo cubra se o conteúdo crescer */
   display: flex;
-  flex-direction: column;
+  flex-direction: column; /* Empilha Título, Conteúdo e Botões verticalmente */
+  align-items: center; /* Centraliza tudo horizontalmente */
   gap: 20px;
+  padding: 40px 0;
 }
 
-.titulo-principal {
-   color: var(--cor-secundaria);
+/* 3. WRAPPER PRINCIPAL: O "coração" da sua interface (Avatar + Piada) */
+.principal-wrap {
+  display: flex;
+  /* MUDANÇA CRUCIAL: 'flex-start' trava o avatar no topo. Se a piada crescer, o avatar não pula */
+  align-items: flex-start;
+  gap: 24px;
+  max-width: 800px;
+  width: 90%; /* Garante margem em telas médias */
+  margin: 20px auto;
+  flex-wrap: wrap; /* Permite que o balão desça em celulares */
+  justify-content: center;
 }
 
+/* 4. CONTAINER DO AVATAR: Gerencia a sobreposição do Círculo e Imagem */
+.avatar-container {
+  position: relative; /* Define o "universo" para o círculo absoluto se posicionar */
+  width: var(--largura-avatar-container);
+  height: var(--largura-avatar-container);
+  display: flex;
+  align-items: center; /* Centraliza os filhos internamente */
+  justify-content: center;
+  flex-shrink: 0; /* IMPEDE que o balão de texto "esmague" o avatar */
+}
+
+/* Círculo de fundo que fica atrás da imagem */
+.circulo-fundo {
+  position: absolute; /* Tira do fluxo, permitindo que a imagem fique na frente */
+  z-index: 1; /* Camada de baixo */
+  border-radius: 50%; /* Transforma o quadrado em círculo */
+  background: linear-gradient(135deg, #6366f1, #a855f7);
+  width: 160px; /* Você pode ajustar isso sem medo de mexer na imagem */
+  height: 160px;
+  transition: all 0.3s ease; /* Suaviza mudanças feitas pelo JS */
+}
+
+/* Estilo da Imagem (Mascote) */
 .imagem-mascote {
-  max-width: 60%;
-  width: min(300px, 70vw);
+  position: relative; /* Necessário para o z-index funcionar */
+  z-index: 2; /* Camada de cima */
+  width: 180px; /* Tamanho fixo da imagem para estabilidade */
   height: auto;
-  object-fit: contain;
-  transition: transform 0.2s;
+  object-fit: contain; /* Garante que a imagem não distorça */
+  filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.1));
+}
+
+/* 5. BALÃO DE PIADA: O container que se expande com o conteúdo */
+.piada-container {
+  position: relative; /* Para podermos adicionar um "rabicho" de balão depois se quiser */
+  background: white;
+  padding: 1.5rem;
+  border-radius: 1.5rem;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+  flex: 1; /* Faz o balão ocupar todo o espaço que sobrar ao lado do avatar */
+  min-width: 280px; /* Largura mínima para o texto não ficar muito espremido */
+  border: 1px solid #e5e7eb;
 }
 
 .texto-piada {
   color: var(--cor-secundaria);
   font-family: var(--tipo-fonte);
+  font-size: var(--tamanho-texto);
+  line-height: 1.5; /* Melhora a leitura do texto */
 }
 
-/*Componentes*/
+/* 6. COMPONENTES (Botões e Seletores) */
+.titulo-principal {
+  color: white; /* Cor branca para destacar no fundo verde */
+  font-family: var(--tipo-fonte);
+  font-size: var(--tamanho-titulo);
+  font-weight: bold;
+}
+
 .botao-procurar {
-  padding: 10px 20px;
-  border-radius: 5px;
+  padding: 12px 24px;
+  border-radius: 8px;
   border: none;
   cursor: pointer;
+  background-color: white;
   font-size: var(--tamanho-texto);
   color: var(--cor-secundaria);
-  :hover {
-    background-color: var(--cor-accento);
-    transition: all 0.3s ease;
-  }
-  :focus {
-    outline: none;
-  }
+  font-weight: bold;
+  transition: all 0.3s ease;
 }
+
+/* Forma correta de fazer hover em CSS Puro */
+.botao-procurar:hover {
+  background-color: var(--cor-accento);
+  transform: translateY(-2px); /* Efeito sutil de levantar ao passar o mouse */
+}
+
 .seletor-piada {
-  padding: 10px 20px;
-  border-radius: 5px;
-  color: var(--cor-secundaria);
-  text-align: center;
-  :hover {
-    background-color: var(--cor-accento);
-    transition: all 0.3s ease;
-  }
+  padding: 10px;
+  border-radius: 8px;
+  border: 2px solid var(--cor-primaria);
+  background: white;
+  width: 250px;
+  cursor: pointer;
 }
 
-/*Responsividade*/
-
+/* 7. RESPONSIVIDADE: Ajustes para telas menores */
 @media (max-width: 768px) {
+  .principal-wrap {
+    flex-direction: column; /* Em celulares, o avatar fica em cima da piada */
+    align-items: center;
+  }
+
   .imagem-mascote {
-    width: 200px;
+    width: 150px; /* Reduz um pouco a imagem no celular */
   }
 }
