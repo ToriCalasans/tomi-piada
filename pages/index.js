@@ -17,52 +17,28 @@ function Home() {
     const lista = piadas[tipo];
     const piadaAleatoria = lista[Math.floor(Math.random() * lista.length)];
     setPiada(piadaAleatoria);
+  };
 */
+  const gerarPiada = async () => {
+    // Aqui pegamos o valor selecionado do select
+    const tipo = document.querySelector(".seletor-piada").value;
+    //sorteira uma imagem do David diferente da atual.
     let novoIndice = indiceImagem;
     while (novoIndice === indiceImagem) {
       novoIndice = Math.floor(Math.random() * imagensDavid.length);
     }
     setIndiceImagem(novoIndice);
-  };
-   
 
-  const gerarPiada = async () => {
-    // 1. Pegamos o valor selecionado no <select>
-    const tipo = document.querySelector(".seletor-piada").value;
     try {
-      // 2. Colocamos a variável 'tipo' na URL e garantimos o formato JSON
+      // Criamos um número único baseado no milissegundo atual
+      const antiCache = new Date().getTime();
+
+      // Adicionamos o &v=${antiCache} no final da URL
       const respostaDaInternet = await fetch(
-        `https://v2.jokeapi.dev/joke/${tipo}/Programming,Miscellaneous,Spooky,Christmas?lang=pt&blacklistFlags=nsfw,religious,political,racist,sexist,explicit&format=txt`,
+        `https://v2.jokeapi.dev/joke/${tipo}?lang=pt&blacklistFlags=nsfw,racist,sexist,explicit&v=${antiCache}`,
       );
       const dadosDaPiada = await respostaDaInternet.json();
-      // 3. tratamos o erro caso a API não encontre piadas naquela catergoria"
-      if (dadosDaPiada.error) {
-        setPiada(
-          "Não encontrei piadas dessa categoria em português, tente outra categoria",
-        );
-        return;
-      }
-      if (dadosDaPiada.type == "single") {
-        setPiada(dadosDaPiada.joke);
-      } else {
-        setPiada(`${dadosDaPiada.setup} ... ${dadosDaPiada.delivery}`);
-      }
-    } catch (error) {
-      console.error("Erro ao buscar piada:", error);
-      setPiada("Ops, deu um erro ao conectar com o servidor de piadas");
-    }
-  };
-  
-  const gerarPiada = async () => {
-    // 1. Pegamos o valor selecionado no <select>
-    const tipo = document.querySelector(".seletor-piada").value;
-    try {
-      // 2. Colocamos a variável 'tipo' na URL e garantimos o formato JSON
-      const respostaDaInternet = await fetch(
-        `https://v2.jokeapi.dev/joke/${tipo}/Programming,Miscellaneous,Spooky,Christmas?lang=pt&blacklistFlags=nsfw,religious,political,racist,sexist,explicit&format=txt`,
-      );
-      const dadosDaPiada = await respostaDaInternet.json();
-      // 3. tratamos o erro caso a API não encontre piadas naquela catergoria"
+      // const tipo = document.querySelector(".seletor-piada").value;
       if (dadosDaPiada.error) {
         setPiada(
           "Não encontrei piadas dessa categoria em português, tente outra categoria",
@@ -95,8 +71,8 @@ function Home() {
             className="imagem-mascote"
           />
         </div>
-          <div className="piada-container">
-            <p className="texto-piada">{piada}</p>
+        <div className="piada-container">
+          <p className="texto-piada">{piada}</p>
         </div>
       </div>
 
@@ -116,9 +92,7 @@ function Home() {
           Procurar piada
         </button>
       </div>
-      <div>
-        <h2>{piada}</h2>
-      </div>
+      <div></div>
     </div>
   );
 }
