@@ -9,7 +9,12 @@
   --largura-avatar-container: 200px;
   --tipo-fonte: Arial, Helvetica, sans-serif;
 }
-
+body,
+html {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 /* 2. LAYOUT GERAL: Configura a estrutura base da página */
 .container-principal {
   background-color: var(--cor-fundo);
@@ -83,6 +88,7 @@
   font-family: var(--tipo-fonte);
   font-size: var(--tamanho-texto);
   line-height: 1.5; /* Melhora a leitura do texto */
+  white-space: pre-line;
 }
 
 /* 6. COMPONENTES (Botões e Seletores) */
@@ -118,6 +124,43 @@
   background: white;
   width: 250px;
   cursor: pointer;
+}
+.botao-copiar-bola {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  border: none;
+  background-color: yellowgreen;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease; /* Faz qualquer mudança acontecer de forma suave */
+  position: absolute;
+  right: -20px;
+  top: 50%;
+  transform: translateY(-50%); /* Centraliza verticalmente */
+}
+.botão-copiar-bola:hover {
+  background-color: darkgreen;
+  transform: scale(1.05); /* Da uma crescidinha quando passar o mouse */
+}
+.copiado-ativo {
+  background-color: #0c5e40;
+  color: white;
+  animation: pulinho 0.5s ease-in-out; /* Animação de pulinho */
+}
+@keyframes pulinho {
+  0% {
+    transform: translateY(-50%) scale(1);
+  }
+  50% {
+    transform: translateY(-50%) scale(1.3);
+  }
+  100% {
+    transform: translateY(-50%) scale(1);
+  }
 }
 
 /* 7. RESPONSIVIDADE: Ajustes para telas menores */

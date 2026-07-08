@@ -4,8 +4,7 @@ import David2 from "../src/assets/images/david-a-lagartixa-2.png";
 import David3 from "../src/assets/images/david-a-lagartixa-3.png";
 import David4 from "../src/assets/images/david-a-lagartixa-4.png";
 import David5 from "../src/assets/images/david-a-lagartixa-5.png";
-import { useState } from "react";
-
+import { useState, useEffect } from "react";
 let ultimaPiadaMostrada = "";
 
 function Home() {
@@ -15,7 +14,37 @@ function Home() {
   const [piadaCompleta, setPiadaCompleta] = useState("");
   const [piadaExibida, setPiadaExibida] = useState("");
   const [copiado, setCopiado] = useState(false);
-  const [piada, setPiada] = useState("");
+  const [piada, setPiada] = useState(
+    "Escolha uma categoria e clique em Procurar piada para começar!",
+  );
+  useEffect(() => {
+    // Se não houver piada completa, não faz nada
+    if (!piadaCompleta) return;
+
+    setPiadaExibida(""); // Reseta o balão para começar limpo
+    let indiceLetra = 0;
+    let idDoTimer;
+
+    // Criamos uma função interna que vai colocar uma letra por vez
+    const digitarLetra = () => {
+      if (indiceLetra < piadaCompleta.length) {
+        // Adiciona a letra atual exatamente no índice correto
+        setPiadaExibida(
+          (textoAteAgora) => textoAteAgora + piadaCompleta.charAt(indiceLetra),
+        );
+        indiceLetra++;
+
+        // Agenda a PRÓXIMA letra para daqui a 30ms, criando uma corrente perfeita
+        idDoTimer = setTimeout(digitarLetra, 30);
+      }
+    };
+
+    // Dispara a primeira letra!
+    digitarLetra();
+
+    // Se o usuário clicar de novo no botão no meio da digitação, limpa o timer antigo
+    return () => clearTimeout(idDoTimer);
+  }, [piadaCompleta]);
 
   const gerarPiada = async () => {
     const listasDeSons = [
@@ -54,11 +83,18 @@ function Home() {
       }
       ultimaPiadaMostrada = piadaNova;
       som.play();
-      setPiada(piadaNova);
+      setPiadaCompleta(piadaNova);
     } catch (error) {
       console.error("Erro ao buscar piada na API interna:", error);
       setPiada("Ops, deu um erro ao conectar com o servidor de piadas.");
     }
+  };
+  const copiarPiada = () => {
+    navigator.clipboard.writeText(piada);
+    setCopiado(true);
+    setTimeout(() => {
+      setCopiado(false);
+    }, 2000);
   };
   return (
     <div className="container-principal">
@@ -76,7 +112,14 @@ function Home() {
           />
         </div>
         <div className="piada-container">
-          <p className="texto-piada">{piada}</p>
+          <p className="texto-piada">{piadaExibida || piada}</p>
+          <button
+            onClick={copiarPiada}
+            className={`botao-copiar-bola ${copiado ? "copiado-ativo" : ""}`}
+            title="Copiar Piada"
+          >
+            {copiado ? "✓" : "📋"}
+          </button>
         </div>
       </div>
 
