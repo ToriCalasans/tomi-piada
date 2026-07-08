@@ -12,37 +12,46 @@ function Home() {
   const [indiceImagem, setIndiceImagem] = useState(0);
   const [indiceSom, setIndiceSom] = useState(0);
   const [piadaCompleta, setPiadaCompleta] = useState("");
-  const [piadaExibida, setPiadaExibida] = useState("");
-  const [copiado, setCopiado] = useState(false);
-  const [piada, setPiada] = useState(
+  const [piadaExibida, setPiadaExibida] = useState(
     "Escolha uma categoria e clique em Procurar piada para começar!",
   );
+  const [copiado, setCopiado] = useState(false);
+  const [piada, setPiada] = useState("");
+
   useEffect(() => {
     // Se não houver piada completa, não faz nada
     if (!piadaCompleta) return;
 
-    setPiadaExibida(""); // Reseta o balão para começar limpo
-    let indiceLetra = 0;
+    setPiadaExibida(""); // Garante o reset do balão
     let idDoTimer;
 
-    // Criamos uma função interna que vai colocar uma letra por vez
     const digitarLetra = () => {
-      if (indiceLetra < piadaCompleta.length) {
-        // Adiciona a letra atual exatamente no índice correto
-        setPiadaExibida(
-          (textoAteAgora) => textoAteAgora + piadaCompleta.charAt(indiceLetra),
-        );
-        indiceLetra++;
+      setPiadaExibida((textoAteAgora) => {
+        // O tamanho atual do texto na tela nos diz exatamente qual é a próxima letra!
+        const proximoIndice = textoAteAgora.length;
 
-        // Agenda a PRÓXIMA letra para daqui a 30ms, criando uma corrente perfeita
-        idDoTimer = setTimeout(digitarLetra, 30);
-      }
+        // Se já digitou tudo, interrompe a corrente
+        if (proximoIndice >= piadaCompleta.length) {
+          return textoAteAgora;
+        }
+
+        // Adiciona a próxima letra de forma cirúrgica
+        const proximoTexto =
+          textoAteAgora + piadaCompleta.charAt(proximoIndice);
+
+        // Agenda a próxima letra apenas se ainda houver texto para digitar
+        if (proximoTexto.length < piadaCompleta.length) {
+          idDoTimer = setTimeout(digitarLetra, 30);
+        }
+
+        return proximoTexto;
+      });
     };
 
-    // Dispara a primeira letra!
-    digitarLetra();
+    // Dá uma micro pausa de 50ms antes de começar para o React estabilizar o estado
+    idDoTimer = setTimeout(digitarLetra, 50);
 
-    // Se o usuário clicar de novo no botão no meio da digitação, limpa o timer antigo
+    // Limpeza total de memória para evitar clones de cronômetros
     return () => clearTimeout(idDoTimer);
   }, [piadaCompleta]);
 
@@ -77,13 +86,13 @@ function Home() {
       ) {
         const resposta = await fetch(`/api/piadas?tipo=${tipo}`);
         const dadosDaPiada = await resposta.json();
-        setPiada(dadosDaPiada.texto);
         piadaNova = dadosDaPiada.texto;
         tentativas++;
       }
       ultimaPiadaMostrada = piadaNova;
       som.play();
       setPiadaCompleta(piadaNova);
+      setPiada(piadaNova);
     } catch (error) {
       console.error("Erro ao buscar piada na API interna:", error);
       setPiada("Ops, deu um erro ao conectar com o servidor de piadas.");
@@ -112,7 +121,7 @@ function Home() {
           />
         </div>
         <div className="piada-container">
-          <p className="texto-piada">{piadaExibida || piada}</p>
+          <p className="texto-piada">{piadaExibida}</p>
           <button
             onClick={copiarPiada}
             className={`botao-copiar-bola ${copiado ? "copiado-ativo" : ""}`}
