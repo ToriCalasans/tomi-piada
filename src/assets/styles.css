@@ -1,4 +1,18 @@
-/* 1. VARIÁVEIS DE AMBIENTE: Centraliza as cores e tamanhos para facilitar mudanças futuras */
+/* ==========================================================================
+   1. CONFIGURAÇÕES GERAIS E RESET
+   ========================================================================== */
+
+/* O seletor '*' pega absolutamente todos os elementos da página. 
+   Garante que o site comece do zero, limpando margens padrão dos navegadores. */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box; /* Essencial: faz com que bordas e preenchimentos não aumentem o tamanho fixo dos blocos */
+}
+
+/* Centraliza as cores e fontes em um único lugar (variáveis) para facilitar mudanças futuras */
 :root {
   --cor-fundo: #157f58;
   --cor-primaria: #0c5e40;
@@ -9,96 +23,141 @@
   --largura-avatar-container: 200px;
   --tipo-fonte: Arial, Helvetica, sans-serif;
 }
+
+/* Configura a janela principal do navegador */
 body,
 html {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+  width: 100%;
+  overflow-x: hidden; /* MÁGICA: Corta qualquer elemento que tente sair para os lados, eliminando faixas brancas */
 }
-/* 2. LAYOUT GERAL: Configura a estrutura base da página */
+
+/* ==========================================================================
+   2. ESTRUTURA DE LAYOUT (CONTAINERS)
+   ========================================================================== */
+
+/* O grande bloco que abraça o site inteiro */
 .container-principal {
   background-color: var(--cor-fundo);
-  min-height: 100vh; /* Usa min-height para garantir que o fundo cubra se o conteúdo crescer */
+  min-height: 100vh; /* Ocupa no mínimo 100% da altura da tela do dispositivo */
   display: flex;
-  flex-direction: column; /* Empilha Título, Conteúdo e Botões verticalmente */
-  align-items: center; /* Centraliza tudo horizontalmente */
-  gap: 20px;
-  padding: 40px 0;
+  flex-direction: column; /* Empilha o título, o wrapper e os botões verticalmente */
+  align-items: center; /* Centraliza todos os blocos na horizontal */
+  gap: 20px; /* Cria uma distância padrão de 20px entre os blocos empilhados */
+  padding: 40px 0; /* Espaço interno nas partes superior e inferior do site */
 }
 
-/* 3. WRAPPER PRINCIPAL: O "coração" da sua interface (Avatar + Piada) */
+/* O bloco menor que junta apenas o David (Mascote) + o Balão de piada */
 .principal-wrap {
   display: flex;
-  /* MUDANÇA CRUCIAL: 'flex-start' trava o avatar no topo. Se a piada crescer, o avatar não pula */
-  align-items: flex-start;
-  gap: 24px;
-  max-width: 800px;
-  width: 90%; /* Garante margem em telas médias */
-  margin: 20px auto;
-  flex-wrap: wrap; /* Permite que o balão desça em celulares */
-  justify-content: center;
+  align-items: flex-start; /* Alinha o topo do David com o topo do balão. Evita que o David pule se o texto crescer */
+  gap: 24px; /* Distância lateral entre o David e o Balão */
+  max-width: 800px; /* Não deixa o conteúdo esticar demais em telas de PCs gigantes */
+  width: 90%; /* Garante uma margem de segurança de 10% nas laterais em telas médias */
+  margin: 20px auto; /* Centraliza o bloco inteiro na tela */
+  justify-content: center; /* Se sobrar espaço, centraliza os filhos */
+}
+/* Cria uma coluna flexível na direita que empilha o Balão e os Controles */
+.coluna-conteudo-direita {
+  display: flex;
+  flex-direction: column;
+  gap: 16px; /* Distância perfeita e controlada de 16px entre a base do balão e os botões! */
+  flex: 1; /* Faz esta coluna ocupar todo o espaço ao lado do David */
+  min-width: 280px;
+}
+/* Alinha o Select e o Botão de Procurar um ao lado do outro no PC */
+.controles-container {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  flex-wrap: wrap; /* Se a tela encolher, eles quebram de linha suavemente */
 }
 
-/* 4. CONTAINER DO AVATAR: Gerencia a sobreposição do Círculo e Imagem */
+/* ==========================================================================
+   3. AVATAR DO MASCOTE (DAVID)
+   ========================================================================== */
+
+/* O quadrado invisível que guarda o círculo de fundo e o desenho da lagartixa */
 .avatar-container {
-  position: relative; /* Define o "universo" para o círculo absoluto se posicionar */
+  position: relative; /* Define que este quadrado é o 'universo' de referência para os filhos absolutos */
   width: var(--largura-avatar-container);
   height: var(--largura-avatar-container);
   display: flex;
-  align-items: center; /* Centraliza os filhos internamente */
-  justify-content: center;
-  flex-shrink: 0; /* IMPEDE que o balão de texto "esmague" o avatar */
+  align-items: center; /* Centraliza o círculo e o David verticalmente */
+  justify-content: center; /* Centraliza o círculo e o David horizontalmente */
+  flex-shrink: 0; /* IMPEDE que o balão de piada esmague o tamanho do David em telas médias */
 }
 
-/* Círculo de fundo que fica atrás da imagem */
+/* Círculo roxo/azul gradiente que fica atrás do mascote */
 .circulo-fundo {
-  position: absolute; /* Tira do fluxo, permitindo que a imagem fique na frente */
-  z-index: 1; /* Camada de baixo */
-  border-radius: 50%; /* Transforma o quadrado em círculo */
+  position: absolute; /* Sai do fluxo normal para que possamos colocá-lo exatamente atrás da imagem */
+  z-index: 1; /* Camada número 1 (fica por baixo) */
+  border-radius: 50%; /* Corta as quinas do quadrado, transformando-o em um círculo perfeito */
   background: linear-gradient(135deg, #6366f1, #a855f7);
-  width: 160px; /* Você pode ajustar isso sem medo de mexer na imagem */
+  width: 160px;
   height: 160px;
-  transition: all 0.3s ease; /* Suaviza mudanças feitas pelo JS */
+  transition: all 0.3s ease; /* Faz com que qualquer alteração de tamanho aconteça de forma suave */
 }
 
-/* Estilo da Imagem (Mascote) */
+/* A imagem real do David */
 .imagem-mascote {
-  position: relative; /* Necessário para o z-index funcionar */
-  z-index: 2; /* Camada de cima */
-  width: 180px; /* Tamanho fixo da imagem para estabilidade */
-  height: auto;
-  object-fit: contain; /* Garante que a imagem não distorça */
-  filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.1));
+  position: relative; /* Ativa o poder de usarmos o z-index nesta imagem */
+  z-index: 2; /* Camada número 2 (fica por cima do círculo de fundo) */
+  width: 180px; /* Tamanho fixo para manter a estabilidade visual */
+  height: auto; /* Calcula a altura proporcionalmente para não distorcer a imagem */
+  object-fit: contain;
+  filter: drop-shadow(
+    0 10px 15px rgba(0, 0, 0, 0.1)
+  ); /* Cria uma sombra realista ao redor do desenho da lagartixa */
 }
 
-/* 5. BALÃO DE PIADA: O container que se expande com o conteúdo */
+/* ==========================================================================
+   4. BALÃO DE TEXTO DA PIADA
+   ========================================================================== */
+
+/* O retângulo branco onde o texto é digitado */
 .piada-container {
-  position: relative; /* Para podermos adicionar um "rabicho" de balão depois se quiser */
+  position: relative; /* Define que este balão é a 'âncora' para o botão absoluto de copiar se posicionar */
   background: white;
-  padding: 1.5rem;
+  padding: 1.5rem 3.5rem 1.5rem 1.5rem; /* Deixamos mais espaço na direita (3.5rem) para o texto nunca cobrir o botão de copiar */
   border-radius: 1.5rem;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-  flex: 1; /* Faz o balão ocupar todo o espaço que sobrar ao lado do avatar */
-  min-width: 280px; /* Largura mínima para o texto não ficar muito espremido */
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1); /* Sombra elegante abaixo do balão */
+  flex: 1; /* Faz o balão ocupar de forma inteligente todo o espaço que sobrar ao lado do David */
+  min-width: 280px; /* Largura mínima para que o balão não fique esmagado */
   border: 1px solid #e5e7eb;
 }
 
+/* O parágrafo de texto onde as piadas aparecem */
 .texto-piada {
   color: var(--cor-secundaria);
   font-family: var(--tipo-fonte);
   font-size: var(--tamanho-texto);
-  line-height: 1.5; /* Melhora a leitura do texto */
-  white-space: pre-line;
+  line-height: 1.5; /* Melhora a leitura dando espaçamento entre as linhas */
+  white-space: pre-line; /* Superpoder: faz o navegador respeitar as quebras de linha (\n) vindas do JSON */
 }
 
-/* 6. COMPONENTES (Botões e Seletores) */
+/* ==========================================================================
+   5. COMPONENTES INTERATIVOS (BOTÕES E SELETORES)
+   ========================================================================== */
+
+/* Título principal do site */
 .titulo-principal {
-  color: white; /* Cor branca para destacar no fundo verde */
+  color: white;
   font-family: var(--tipo-fonte);
   font-size: var(--tamanho-titulo);
   font-weight: bold;
 }
 
+/* Caixa de seleção da categoria das piadas */
+.seletor-piada {
+  padding: 10px;
+  border-radius: 8px;
+  border: 2px solid var(--cor-primaria);
+  background: white;
+  width: 250px;
+  cursor: pointer; /* Transforma a seta do mouse na mãozinha de clique */
+}
+
+/* Botão principal 'Procurar Piada' */
 .botao-procurar {
   padding: 12px 24px;
   border-radius: 8px;
@@ -108,69 +167,164 @@ html {
   font-size: var(--tamanho-texto);
   color: var(--cor-secundaria);
   font-weight: bold;
-  transition: all 0.3s ease;
+  transition: all 0.3s ease; /* Faz com que o efeito de hover dure 0.3 segundos para ser suave */
 }
 
-/* Forma correta de fazer hover em CSS Puro */
+/* Efeito de passar o mouse no botão de procurar */
 .botao-procurar:hover {
   background-color: var(--cor-accento);
-  transform: translateY(-2px); /* Efeito sutil de levantar ao passar o mouse */
+  transform: translateY(
+    -2px
+  ); /* Faz o botão levantar de leve (efeito flutuante) */
 }
 
-.seletor-piada {
-  padding: 10px;
-  border-radius: 8px;
-  border: 2px solid var(--cor-primaria);
-  background: white;
-  width: 250px;
-  cursor: pointer;
-}
+/* O botão redondo de copiar (Visual padrão para Computadores) */
 .botao-copiar-bola {
-  width: 45px;
-  height: 45px;
-  border-radius: 50%;
+  position: absolute; /* Flutua livremente baseado nas paredes do .piada-container */
+  right: 15px; /* Fica guardado elegantemente a 15px da borda direita interna (Resolve a barra branca!) */
+  top: 50%; /* Move o botão para a metade da altura do balão */
+  transform: translateY(
+    -50%
+  ); /* Ajuste fino: sobe metade da sua própria altura, centralizando perfeitamente na vertical */
+  width: 42px;
+  height: 42px;
+  border-radius: 50%; /* Corta os cantos transformando o botão em uma bolinha perfeita */
   border: none;
-  background-color: yellowgreen;
-  font-size: 20px;
+  background-color: #095c17; /* Cinza claro moderno e limpo */
+  font-size: 18px;
   cursor: pointer;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease; /* Faz qualquer mudança acontecer de forma suave */
-  position: absolute;
-  right: -20px;
-  top: 50%;
-  transform: translateY(-50%); /* Centraliza verticalmente */
+  align-items: center; /* Centraliza o emoji da prancheta verticalmente na bolinha */
+  justify-content: center; /* Centraliza o emoji da prancheta horizontalmente na bolinha */
+  transition: all 0.2s ease;
+  z-index: 10;
 }
-.botão-copiar-bola:hover {
-  background-color: darkgreen;
-  transform: scale(1.05); /* Da uma crescidinha quando passar o mouse */
+
+/* Efeito de passar o mouse na bolinha de copiar (Corrigido o acento!) */
+.botao-copiar-bola:hover {
+  background-color: #084e13; /* Escurece o cinza sutilmente */
+  transform: translateY(-50%) scale(1.08); /* Mantém centralizado e dá uma leve aumentada */
 }
+
+/* Classe especial injetada pelo React quando o usuário clica em copiar */
 .copiado-ativo {
-  background-color: #0c5e40;
+  background-color: #4ade80 !important; /* Muda instantaneamente para o verde sucesso */
   color: white;
-  animation: pulinho 0.5s ease-in-out; /* Animação de pulinho */
+  animation: pulinhoPC 0.4s ease-in-out; /* Dispara a animação exclusiva de computadores */
 }
-@keyframes pulinho {
+
+/* Receita da animação de pulinho para Computadores (mantendo o alinhamento vertical) */
+@keyframes pulinhoPC {
   0% {
     transform: translateY(-50%) scale(1);
   }
   50% {
-    transform: translateY(-50%) scale(1.3);
-  }
+    transform: translateY(-50%) scale(1.25);
+  } /* Cresce mantendo a centralização vertical */
   100% {
     transform: translateY(-50%) scale(1);
   }
 }
+/* ==========================================================================
+   6. RODAPÉ E BOTÃO DO GITHUB
+   ========================================================================== */
 
-/* 7. RESPONSIVIDADE: Ajustes para telas menores */
+/* Posiciona o rodapé bem na base da página */
+.rodape {
+  margin-top: 20px; /* Garante uma distância confortável dos botões de cima */
+  padding: 15px;
+  display: flex;
+  justify-content: center; /* Centraliza o botão horizontalmente */
+  width: 100%;
+}
+
+/* Transforma o link em um botão elegante e arredondado */
+.link-github {
+  display: flex;
+  align-items: center; /* Alinha o ícone do gatinho perfeitamente no meio do texto */
+  gap: 10px; /* Cria uma distância de 10px entre o ícone e a palavra 'GitHub...' */
+  background-color: var(--cor-primaria); /* Usa o verde escuro do seu projeto */
+  color: white;
+  text-decoration: none; /* Remove aquela linha sublinhada padrão de links */
+  font-family: var(--tipo-fonte);
+  font-size: 14px;
+  font-weight: bold;
+  padding: 10px 20px;
+  border-radius: 30px; /* Deixa as laterais do botão totalmente arredondadas (padrão pílula) */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra leve para dar sensação de relevo */
+  transition: all 0.3s ease; /* Faz os efeitos de passar o mouse acontecerem de forma suave */
+}
+
+/* Efeito visual ao passar o mouse por cima do botão do GitHub */
+.link-github:hover {
+  background-color: #111827; /* Muda para um cinza quase preto (a cor oficial da marca do GitHub) */
+  transform: translateY(-3px); /* Faz o botão dar uma leve flutuada para cima */
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2); /* Aumenta a sombra para simular que ele se afastou do fundo */
+}
+
+/* Mantém o ícone flexível e proporcional */
+.icone-github {
+  flex-shrink: 0; /* Impede o navegador de esmagar o ícone se a tela ficar muito pequena */
+}
+
+/* ==========================================================================
+   7. RESPONSIVIDADE (TELA DE CELULARES E TABLETS)
+   ========================================================================== */
+
+/* Este bloco só é lido pelo navegador se a tela do aparelho for menor que 768px (Celulares) */
 @media (max-width: 768px) {
+  /* Altera o wrapper para empilhar o David em cima do balão de piada */
   .principal-wrap {
-    flex-direction: column; /* Em celulares, o avatar fica em cima da piada */
+    flex-direction: column;
     align-items: center;
+    gap: 16px;
   }
 
+  /* Reduz um pouco o tamanho do desenho do David para caber em telas estreitas */
   .imagem-mascote {
-    width: 150px; /* Reduz um pouco a imagem no celular */
+    width: 140px;
+  }
+
+  /* Altera os espaçamentos do balão no celular */
+  .piada-container {
+    width: 100%;
+    /* Criamos uma zona livre gigante no fundo do balão (padding-bottom: 3.5rem) para guardar o botão */
+    padding: 1.5rem 1.5rem 3.5rem 1.5rem;
+  }
+
+  /* Move o botão de copiar da lateral direita para o fundo do balão (Padrão Mobile) */
+  .botao-copiar-bola {
+    right: 50%; /* Move para o meio horizontal do balão */
+    top: auto; /* Desliga o alinhamento vertical do PC */
+    bottom: 12px; /* Fixa a bolinha no fundo do balão */
+    transform: translateX(
+      50%
+    ); /* Ajuste fino: move metade da sua largura para ficar perfeitamente centralizado */
+  }
+
+  /* Ajusta o efeito de hover no celular para respeitar a nova posição */
+  .botao-copiar-bola:hover {
+    transform: translateX(50%) scale(1.08);
+  }
+
+  /* Sobrescreve a animação no celular para rodar o pulinho sem quebrar o botão de lugar */
+  .copiado-ativo {
+    animation: pulinhoMobile 0.4s ease-in-out;
+  }
+  .controles-container {
+    justify-content: center;
+  }
+
+  /* Receita da animação de pulinho para celulares (mantendo a centralização horizontal) */
+  @keyframes pulinhoMobile {
+    0% {
+      transform: translateX(50%) scale(1);
+    }
+    50% {
+      transform: translateX(50%) scale(1.25);
+    }
+    100% {
+      transform: translateX(50%) scale(1);
+    }
   }
 }
